@@ -10,7 +10,7 @@ img {
 }
 .App {
   min-height: 100vh;
-  width: 85vw;
+    width: 85vw;
   max-width: 1900px;
   margin: 0rem auto;
 }
@@ -29,18 +29,21 @@ nav {
   justify-content: space-between;
   min-height: 90px;
 }
+
+nav:hover{
+  border-bottom: 1px solid #bdc3c7;
+}
 .navbar-menu-container {
   display: none;
 }
 .navbar-links-container a {
-  margin-right: 3rem;
   text-decoration: none;
   color: black;
   font-size: 1.1rem;
   font-weight: 600;
 }
 .primary-button {
-  padding: 0.9rem 1.75rem;
+  padding: 0.9rem 1rem;
   background-color: white;
   outline: none;
   border: none;
@@ -50,6 +53,8 @@ nav {
   font-weight: 600;
   transition: 0.2s;
 }
+
+
 .navbar-cart-icon {
   font-size: 1.15rem;
 }
@@ -99,7 +104,25 @@ nav {
   color: #4753A7;
   font-size: clamp(2rem, 5vw, 2rem);
   font-weight: bold;
+  text-decoration:none ;
+
 }
+.link1{
+  text-decoration:none ;
+  outline: none;
+  border: none;
+  border-radius: 5rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: white;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
 .footer-logo-container{
   color: #4753A7;
   font-size: clamp(2rem, 5vw, 2rem);
@@ -119,6 +142,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 }
 .secondary-button svg {
   margin-left: 0.75rem;
@@ -206,7 +230,7 @@ nav {
   padding: 0.5rem 1rem;
 }
 .footer-wrapper {
-  margin: 6rem 0rem;
+  margin: 2rem 0rem;
   display: flex;
   margin-top: 10rem;
 }
@@ -438,13 +462,15 @@ nav {
 }
 
 
+.b2 {
+    display: flex;
+    justify-content: center;
+}
+
 table {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+
   border-collapse: collapse;
-  width: 800px;
+  width: 100%;
   height: 200px;
   border: 1px solid #bdc3c7;
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2), -1px -1px 8px rgba(0, 0, 0, 0.2);
@@ -467,12 +493,11 @@ td {
   color: #fff;
 }
 
-h1 {
+.Attendance {
   font-weight: 600;
-  text-align: center;
-  background-color:#4753A7;
-  color: #fff;
+  color:#4753A7;
   padding: 10px 0px;
+  
 }
 
 tr:hover {
@@ -485,4 +510,11 @@ tr:hover {
   table {
       width: 90%;
   }
+}
+
+.home-banner-container1{
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+
 }

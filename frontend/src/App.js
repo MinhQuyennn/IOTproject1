@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Components/Home';
 import Attendance from './Components/Attendance';
-import Footer from './Components/Footer';
-
+import style from './App.css'
+import Footer from "./Components/Footer";
 
 
 function App() {

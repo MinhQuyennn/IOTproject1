@@ -3,6 +3,7 @@ import BannerBackground from "../Assets/home-banner-background (1).png";
 import BannerImage from "../Assets/—Pngtree—illustration of a man working_5361915.png";
 import Navbar from "./Navbar";
 import { FiArrowRight } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const Home = () => {
  
@@ -22,9 +23,9 @@ const Home = () => {
             encapsulates our dedication to safeguarding your environment,
             reinforcing each residence's defenses to ensure tranquility.
           </p>
-          <button className="secondary-button" >
-            View history now <FiArrowRight />{" "}
-          </button>
+            <Link to ='/attendance' className="secondary-button">View history now <FiArrowRight />{" "}</Link>
+            
+
         </div>
         <div className="home-image-section">
           <img src={BannerImage} alt="" />
