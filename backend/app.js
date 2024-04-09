@@ -1,36 +1,81 @@
 const express = require("express");
-const attendanceRouters = require("./routes/attendance");
-
-require("dotenv").config();
-
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const multer = require("multer");
 const cors = require("cors");
 
-//const mysql = require("mysql2");
-const bodyParser = require("body-parser");
-
-//const db = require("./config/database");
-const configViewEngine = require("./config/viewEngine");
 const app = express();
+const PORT = process.env.PORT || 8080;
 
-const port = process.env.PORT || 8888;
+// Connect to MongoDB
+mongoose.connect(
+  "mongodb+srv://duongquocvu1309:abc123456@cluster0.hqa2jcz.mongodb.net/",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "Connection error:"));
+db.once("open", () => console.log("Connected to MongoDB"));
 
-app.use(cors());
-app.use(express.json());
+// Define schema for the data
+const attendanceSchema = new mongoose.Schema({
+  name: String,
+  time: String,
+  image: Buffer,
+});
+const Attendance = mongoose.model("Attendance", attendanceSchema);
+
+// Configure multer to store uploaded images
+const upload = multer({ dest: "uploads/" });
+
+// Middleware for handling JSON data and image data
 app.use(bodyParser.json());
-// Config template engine
-configViewEngine(app);
 
-// define all our routes
-app.use("/", attendanceRouters);
+// Enable CORS for all routes
+app.use(cors());
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server is running on port ${port}`);
+// Route to handle POST requests
+app.post("/upload", upload.single("image"), async (req, res) => {
+  // Get data from the request
+  const { name, time, image } = req.body;
+
+  try {
+    // Save the data to MongoDB
+    const newAttendance = new Attendance({
+      name: name,
+      time: time,
+      image: Buffer.from(image, "base64"), // Convert base64 string to buffer
+    });
+
+    await newAttendance.save(); // Use async/await to wait for the save operation
+
+    res.status(201).send("Attendance data uploaded successfully.");
+  } catch (err) {
+    console.error("Error saving attendance data:", err);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-db.query("SELECT 1 + 3", (error, results, fields) => {
-  if (error) {
-    console.error("Error connecting to MySQL:", error.message);
-    return;
+// Route to fetch all attendance data
+app.get("/", async (req, res) => {
+  try {
+    const allAttendance = await Attendance.find({}); // Retrieve all documents from the Attendance collection
+    res.json(allAttendance); // Send the retrieved data as JSON response
+  } catch (err) {
+    console.error("Error fetching attendance data:", err);
+    res.status(500).send("Internal Server Error");
   }
-  console.log("Connected to database!");
+});
+
+// Log the name of the file that failed to post
+app.use((err, req, res, next) => {
+  console.error("File upload error:", err.message);
+  res.status(500).send("File upload error");
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
