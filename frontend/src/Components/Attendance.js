@@ -1,8 +1,13 @@
 import Navbar from "./Navbar";
 import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const Attendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedOption, setSelectedOption] = useState('Attendance'); // Default to 'Attendance'
 
   useEffect(() => {
     async function fetchAllAttendance() {
@@ -12,6 +17,10 @@ const Attendance = () => {
           throw new Error("Failed to fetch attendance data");
         }
         const data = await response.json();
+        // Sort the attendance data based on time in descending order
+        data.sort((a, b) => {
+          return new Date(b.time.replace('_', ' ')) - new Date(a.time.replace('_', ' '));
+        });
         setAttendanceData(data);
       } catch (error) {
         console.error("Error fetching attendance data:", error.message);
@@ -21,27 +30,61 @@ const Attendance = () => {
     fetchAllAttendance();
   }, []);
 
+  const openImage = (image) => {
+    setSelectedImage(image);
+  };
+
+  const closeImage = () => {
+    setSelectedImage(null);
+  };
+
+  const handleDateChange = (event) => {
+    setSelectedDate(event.target.value);
+  };
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const filteredAttendance = attendanceData.filter((attendance) => {
+    // Filter based on the selected date
+    const dateFiltered = selectedDate ? attendance.time.startsWith(selectedDate) : true;
+    // Filter based on the selected option
+    const optionFiltered = selectedOption === 'Attendance' ? true : attendance.name === 'intruder';
+    return dateFiltered && optionFiltered;
+  });
+
   return (
     <div className="home-container">
       <Navbar />
       <div className="home-banner-container1">
         <div className="b1">
           <h2 className="Attendance">Attendance</h2>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={handleDateChange}
+          />
+          <select value={selectedOption} onChange={handleOptionChange}>
+            <option value="Attendance">All</option>
+            <option value="Intruder">Intruder</option>
+          </select>
         </div>
         <div className="b2">
           <table>
             <tbody>
               <tr id="header">
-                <th>No</th>
-                <th>Name</th>
                 <th>Time</th>
+                <th>Name</th>
+                
                 <th>Image</th>
+                
               </tr>
-              {attendanceData.map((attendance) => (
+              {filteredAttendance.map((attendance) => (
                 <tr key={attendance._id}>
-                  <td>{attendance._id}</td>
-                  <td>{attendance.name}</td>
                   <td>{attendance.time}</td>
+                  <td>{attendance.name}</td>
+                  
                   <td>
                     {/* Display the image if available */}
                     {attendance.image && (
@@ -50,7 +93,8 @@ const Attendance = () => {
                           attendance.image.data
                         )}`}
                         alt="Attendance Image"
-                        style={{ maxWidth: "100px" }}
+                        style={{ maxWidth: "100px", cursor: "pointer" }}
+                        onClick={() => openImage(attendance.image)}
                       />
                     )}
                   </td>
@@ -60,6 +104,20 @@ const Attendance = () => {
           </table>
         </div>
       </div>
+      {selectedImage && (
+        <div className="modal">
+          <span className="close" onClick={closeImage}>
+            <FontAwesomeIcon icon={faTimes} className="close-icon" />
+          </span>
+          <img
+            src={`data:image/jpeg;base64,${encodeBase64FromArrayBuffer(
+              selectedImage.data
+            )}`}
+            alt="Attendance Image"
+            className="modal-content"
+          />
+        </div>
+      )}
     </div>
   );
 };
